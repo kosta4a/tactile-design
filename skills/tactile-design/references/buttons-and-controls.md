@@ -113,7 +113,7 @@ Recipes use tokens only (see [tokens.md](tokens.md)): sizes, radii, colours, typ
 | 32 | `--control-h-compact` | compact confirm inside a menu |
 | 28 | `--control-h-pill` | pills, toggle options, icon buttons |
 | 24 | `--control-h-inline` | inline row or card actions |
-| 22 | `--control-h-icon` | row icon buttons, the switch |
+| 22 | `--control-h-icon` | row icon buttons |
 | 20 | `--badge-h` | badges, the search key pill |
 | 18 | `--key-chip` | the key chip on a button |
 
@@ -253,10 +253,10 @@ Use tiles when options sit in a grid on a page, rather than a list in a modal.
 - When picked it looks **pressed in, not raised**: ink-3 fill (ink-4 in dark) with the hairline only, no shadow.
 
 ### Switch
-- 40×22 track, 16px white knob with a tight drop darker than the track under it: `0 1px 2px rgb(ink / .25), 0 0 0 0.5px rgb(ink / .04)` (black in dark).
+- **As tall as the segmented toggle,** so the two line up in a settings card: a 60×36 track (72×44 on a phone), an iPhone's proportions. The knob sits the toggle's 4px in all round: 28px (36pt on a phone).
+- The knob is shaded like the toggle's pill: white with `--shadow-toggle` (the button's 1px ring and crisp drop; in dark a solid 0.5px outline and the black drop). It stays white in dark: a grey knob reads as a hole in the track.
 - On: green-9. Off: ink-7 in light; in dark a near-black grey between ink-5 and ink-6 (#343434 by default).
-- On a phone, an iPhone's switch (Apple's HIG): a 51×31 track and a 27pt knob 2pt in, x 2px to 22px. Desktop keeps 40×22.
-- The knob springs across, x 3px to 21px (2px to 22px on a phone), `{ bounce: 0.2, duration: 0.45 }`, short enough that the overshoot never reaches the track's edge. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
+- The knob springs across, x 4px to 28px (4px to 32px on a phone), `{ bounce: 0.2, duration: 0.45 }`, short enough that the overshoot never reaches the track's edge. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
 - Disabled: `opacity: .6`.
 - 44pt hit area via `touch-target`.
 - A switch setting in a form is a raised row: white + `--shadow-button`, control radius, 12px padding.
