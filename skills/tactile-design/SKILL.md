@@ -133,7 +133,7 @@ Every part comes from the parent, the surface the thing sits on. The tactile tok
 | Menu | in 150ms from `scale(.97)` + fade, origin at the trigger; out 120ms |
 | Modal | in 240ms (16px rise, 4px blur, fade), out 200ms |
 | Sheet | up 320ms, down 200ms, solid the whole way |
-| Springs | `{ bounce, duration }`: .35 / 0.45s for a toggle's sliding pill (the track clips the overshoot), .12 / 0.4s for a page-level toggle, .3 for a switch knob, up to .45 for rare celebrations |
+| Springs | `{ bounce, duration }`: .12 / 0.4s for every toggle's sliding pill and .2 / 0.45s for a switch knob, so the overshoot stays inside the track's inset (a pill travelling 100px at .35 overshoots ~7px, past a 4px inset, and is seen hitting the edge); up to .45 for rare celebrations |
 | Reduced motion | travel, blur and scale become a 150–200ms crossfade; a switch knob moves at once |
 
 ### Phone
@@ -142,6 +142,8 @@ Every part comes from the parent, the surface the thing sits on. The tactile tok
 |---|---|
 | Targets | 44pt; small visuals keep their look and get an invisible 44×44 hit area |
 | Text | 15px floor for body, controls and meta; 14/20 for descriptions under a larger lead; 16px in fields |
+| Fields | 44pt tall, 16px text on any touch screen (iOS zooms into a field set smaller and stays zoomed); 36px at body size with a mouse |
+| Toggles | segmented: a 44pt track, 36px options in the 4px inset; switch: an iPhone's (Apple HIG), 51×31 with a 27pt knob 2pt in |
 | Gutter | 20px each side |
 | Stacking | full width; page stacks keep 12px, dialog and sheet footers 8px; a dialog's confirm goes on top |
 | Dialogs | bottom sheet, white in light, 14px top corners; a white tactile grab handle (36×5, the button's ring and drop, 44pt hit area) instead of ×, and a tap on it closes the sheet |

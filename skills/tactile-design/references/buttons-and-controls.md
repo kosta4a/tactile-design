@@ -199,7 +199,8 @@ Every interactive element needs a visible `:focus-visible` state, drawn with one
 - 20px between fields. Fields in a modal fill its width.
 - Textarea: same recipe, `min-h-21` (84px, three lines), `py-2`.
 - Placeholders start with a capital letter.
-- Field text matches button text size. On any touch screen it is 16px (`--text-field`).
+- Field text matches button text size. On any touch screen it is 16px (`--text-field`), as iOS zooms into a field set smaller and stays zoomed: gate it on `(pointer: coarse)`, not only on width, so an iPad's wider layout gets it too.
+- On a phone the well is 44pt tall (`--control-h`) with 16/24 text; with a mouse, 36px at the body size. Any icon or key inside it keeps its place: 24px at 36, 32px at 44, the same 6px from the end.
 - Lighter variant on a white surface: ink-2 resting, ink-3 on focus.
 
 **A field never looks like a button.** Buttons are raised; fields are sunk. In light a well is one step darker than its surface; in dark, one step lighter.
@@ -222,11 +223,11 @@ Every interactive element needs a visible `:focus-visible` state, drawn with one
 - Track: fully round, 4px padding, 4px gap, one step darker than the surface it sits on (one step lighter in dark: a well).
 - Options: 28px tall (track 36px), 11px side padding, 13/20. Active text ink-12; inactive ink-11, ink-12 on hover.
 - One sliding pill behind the active option, raised like a button and borrowed from the surface: white + `--shadow-toggle` (the button's ring and 1px drop) in light; in dark the control fill (ground + 2, one step above the track) with `--shadow-toggle`: an outline three steps above the pill's fill plus the black drop, `0 0 0 0.5px var(--ink-7), 0 1px 2px 0 rgb(0 0 0 / .5)` on a card.
-- The pill moves as a shared-layout spring, `{ bounce: 0.35, duration: 0.45 }`. The track clips the overshoot: `overflow: hidden` at its full radius.
+- The pill moves as a shared-layout spring, `{ bounce: 0.12, duration: 0.4 }`. Its overshoot has to stay inside the track's 4px inset: at `.35` a pill travelling 100px overshoots ~7px and is seen hitting the end of the track. Keep `overflow: hidden` at the track's full radius as a backstop, not as the fix.
 - The first placement snaps; only a real toggle animates.
-- **Page-level toggle** (a setting for the whole page, such as Light / Dark): the same component, with a 14px icon left of each label (4px gap) and labels at the page's body size and weight. Its spring is shorter, `{ bounce: 0.12, duration: 0.4 }`, so the pill settles without riding into the ends of the track.
+- **Page-level toggle** (a setting for the whole page, such as Light / Dark): the same component, with a 14px icon left of each label (4px gap) and labels at the page's body size and weight. The same spring, so the pill settles without riding into the ends of the track.
 - Toggles hug their content. They are the one control that doesn't fill a modal's width.
-- On a phone: options 36px, track 44px (so it lines up with fields), 14px text. Optionally fill the width with equal options, as iOS does. If the options don't fit, it becomes a dropdown pill that opens a sheet.
+- On a phone: options 36px, track 44pt (so it lines up with fields), 14px text, each option with a 44pt hit area. Optionally fill the width with equal options, as iOS does. If the options don't fit, it becomes a dropdown pill that opens a sheet.
 - Accessibility: `role="radiogroup"`, one tab stop, arrow keys move between options.
 - Use the same toggle component everywhere.
 
@@ -254,7 +255,8 @@ Use tiles when options sit in a grid on a page, rather than a list in a modal.
 ### Switch
 - 40×22 track, 16px white knob with a tight drop darker than the track under it: `0 1px 2px rgb(ink / .25), 0 0 0 0.5px rgb(ink / .04)` (black in dark).
 - On: green-9. Off: ink-7 in light; in dark a near-black grey between ink-5 and ink-6 (#343434 by default).
-- The knob springs across, x 3px to 21px, `{ bounce: 0.3, duration: 0.5 }`. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
+- On a phone, an iPhone's switch (Apple's HIG): a 51×31 track and a 27pt knob 2pt in, x 2px to 22px. Desktop keeps 40×22.
+- The knob springs across, x 3px to 21px (2px to 22px on a phone), `{ bounce: 0.2, duration: 0.45 }`, short enough that the overshoot never reaches the track's edge. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
 - Disabled: `opacity: .6`.
 - 44pt hit area via `touch-target`.
 - A switch setting in a form is a raised row: white + `--shadow-button`, control radius, 12px padding.

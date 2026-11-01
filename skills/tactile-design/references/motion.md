@@ -89,14 +89,13 @@ Always written as `{ type: "spring", bounce, duration }`, never as stiffness and
 | Bounce / duration | Use |
 |---|---|
 | 0 / 0.5s | camera pans. No bounce on a camera. |
-| 0.12 / 0.4s | a page-level toggle's pill (a setting for the whole page, such as theme Light / Dark) |
+| 0.12 / 0.4s | every segmented toggle's pill: a control's (Live / All, 7 / 30 days) and a page-level one (theme Light / Dark) |
 | 0.2 / 0.35–0.5s | height reveals, a page-entrance rise, progress fills |
 | 0.28 / 0.4s | a celebratory modal (rare) |
-| 0.3 / 0.5s | a switch knob |
-| 0.35 / 0.45s | a control's segmented toggle pill (Live / All, 7 / 30 days) |
+| 0.2 / 0.45s | a switch knob |
 | 0.32–0.45 / 0.5–0.7s | a reward toast and its shapes (rare tier only) |
 
-**Springs stay inside their containers.** A control toggle's track clips its pill (`overflow: hidden`), so the overshoot never shows outside the track. A page-level toggle takes the short bounce instead, so its pill settles before it reaches the corner of the track.
+**Springs stay inside their containers.** A clipped overshoot still shows: the pill flattens against the end of its track. So the bounce is set by the room it has. The overshoot grows with how far the part travels, roughly travel × e^(−π·(1−bounce)/√(1−(1−bounce)²)): at `.35` a pill crossing 100px overshoots ~7px, past a toggle's 4px inset; at `.12`, under a pixel. Keep `overflow: hidden` as a backstop only.
 
 ## 5. Travel, blur and scale
 
@@ -167,10 +166,10 @@ Slides in from `translateX(100%)` to 0 in 240ms on `--ease-out`; out in 200ms. N
 Contents fade out together (80ms), then the width animates (220ms, `--ease-out` or Material standard), then contents fade back in together. Flip the state while nothing is visible. Contents are pinned at full width, so they never slide or reflow. Never fade icons in before their text.
 
 ### Sliding selection pill
-One shared-layout element. In a control's segmented toggle it springs with `{ bounce: 0.35, duration: 0.45 }`, the track clipping the overshoot (`overflow: hidden`). In a page-level toggle it springs with `{ bounce: 0.12, duration: 0.4 }`, so it settles short of the track's corners. The first placement snaps. The pill marks the choice only; hover never moves it. Optional stretch while travelling, capped at 3px (`scaleX(1 + min(0.1, 3 / width))`) on a nested element so it composes with the layout transform. Text colour changes over 150ms. Each toggle gets its own layout id.
+One shared-layout element. In every segmented toggle, a control's or a page-level one, it springs with `{ bounce: 0.12, duration: 0.4 }`, so it settles short of the track's ends (`overflow: hidden` stays as a backstop). The first placement snaps. The pill marks the choice only; hover never moves it. Optional stretch while travelling, capped at 3px (`scaleX(1 + min(0.1, 3 / width))`) on a nested element so it composes with the layout transform. Text colour changes over 150ms. Each toggle gets its own layout id.
 
 ### Switch knob
-x 3px to 21px, spring `{ bounce: 0.3, duration: 0.5 }`. Track colour 150ms. First render doesn't animate. Reduced motion: instant, the knob and the track colour both.
+x 3px to 21px (2px to 22px in a phone's 51×31 track), spring `{ bounce: 0.2, duration: 0.45 }`. Track colour 150ms. First render doesn't animate. Reduced motion: instant, the knob and the track colour both.
 
 ### Label swap (loading, done)
 Both states in one grid cell. New state rises from +6px, old leaves to −6px, both with `blur(2px)`, 200ms, strong ease-out. No animation on mount. See [buttons-and-controls.md](buttons-and-controls.md).
