@@ -169,7 +169,7 @@ Contents fade out together (80ms), then the width animates (220ms, `--ease-out` 
 One shared-layout element. In every segmented toggle, a control's or a page-level one, it springs with `{ bounce: 0.12, duration: 0.4 }`, so it settles short of the track's ends (`overflow: hidden` stays as a backstop). The first placement snaps. The pill marks the choice only; hover never moves it. Optional stretch while travelling, capped at 3px (`scaleX(1 + min(0.1, 3 / width))`) on a nested element so it composes with the layout transform. Text colour changes over 150ms. Each toggle gets its own layout id.
 
 ### Switch knob
-From the track's start to its end (flex; the move is a layout animation), 3px in either way in a 44×26 track (4px in a phone's 51×31), spring `{ bounce: 0.2, duration: 0.45 }`. Track colour 150ms. First render doesn't animate. Reduced motion: instant, the knob and the track colour both.
+From the track's start to its end (flex; the move is a layout animation), 3px in either way in a 52×26 track (4px in a phone's 51×31), spring `{ bounce: 0.2, duration: 0.45 }`. Track colour 150ms. First render doesn't animate. Reduced motion: instant, the knob and the track colour both.
 
 ### Label swap (loading, done)
 Both states in one grid cell. New state rises from +6px, old leaves to −6px, both with `blur(2px)`, 200ms, strong ease-out. No animation on mount. See [buttons-and-controls.md](buttons-and-controls.md).
