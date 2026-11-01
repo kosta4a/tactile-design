@@ -253,7 +253,7 @@ Use tiles when options sit in a grid on a page, rather than a list in a modal.
 - When picked it looks **pressed in, not raised**: ink-3 fill (ink-4 in dark) with the hairline only, no shadow.
 
 ### Switch
-- **As tall as the segmented toggle on desktop,** so the two line up in a settings card: a 60×36 track, an iPhone's proportions, the knob the toggle's 4px in all round: 28px.
+- **On desktop, a 44×26 track** with a 20px knob 3px in all round: small beside a 36px toggle, as a switch reads as a mark in a settings row rather than a control as big as its neighbours.
 - **On a phone, an iPhone's switch** (Apple's HIG): a 51×31 track, the knob still 4px in all round: 23px. 44pt hit area. At a row's end it lines up with the toggle above it, 9px from the right edge.
 - **Place the knob with flex, not a pixel offset:** the track is `p-1` with `justify-start` off and `justify-end` on, and the knob moves as a layout animation (`motion.span layout`). It's in place at any size from the first paint (a measured or media-queried offset renders desktop's first and visibly slides on a phone), and Reduce motion makes the move instant.
 - The knob is shaded like the toggle's pill: white with `--shadow-toggle` (the button's 1px ring and crisp drop; in dark a solid 0.5px outline and the black drop). It stays white in dark: a grey knob reads as a hole in the track.
