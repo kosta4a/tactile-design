@@ -47,7 +47,7 @@ A phone layout isn't the desktop layout squeezed. It follows the platform's habi
 
 | Item | Phone |
 |---|---|
-| Buttons, fields, selects, toggle tracks | 44px (36px desktop recipes lift automatically) |
+| Buttons, fields, selects | 44px (36px desktop recipes lift automatically) |
 | Segmented toggle | 42px track: 34px options in the 4px inset, each with a 44pt hit area |
 | Switch | an iPhone's (Apple HIG): 51×31 track, 23px knob 4px in, shaded like the toggle's pill; 44pt hit area |
 | A control at a row's end | as far from the row's right edge as the toggle is from its top and bottom (9px in a 60px row) |
