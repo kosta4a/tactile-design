@@ -87,6 +87,10 @@ The skill names **roles and ratios**, not hex codes. The concrete values (a warm
 - The colour model uses the 12-step scale structure of [Radix Colors](https://www.radix-ui.com/colors). The default neutral is Radix's sand scale.
 - Touch-target and sheet conventions follow Apple's Human Interface Guidelines.
 
+## Contributions
+
+This repository doesn't take pull requests or issues. Fork it and adapt it freely under the license.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
