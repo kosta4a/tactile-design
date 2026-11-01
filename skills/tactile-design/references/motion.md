@@ -17,7 +17,7 @@ Work through these in order for every motion. Stop as soon as the answer is "don
    | Tier | Examples | Treatment |
    |---|---|---|
    | Constant | hover, typing, chart hover, scrolling | colour or opacity only, 150ms or less, no movement |
-   | Frequent | press, toggle, tab, copy, menu | 150–200ms, or a low-bounce spring that retargets |
+   | Frequent | press, toggle, tab, copy, menu | 150–200ms, or a spring that retargets |
    | Occasional | modal, sheet, step change, alert | 200–320ms, with a small blur as the bridge |
    | Rare, first time | onboarding, reward, first success | the delight budget: bounce up to .45, decorative shapes, choreography |
 
@@ -25,7 +25,7 @@ Work through these in order for every motion. Stop as soon as the answer is "don
 3. **Name one purpose.** Feedback (press, tick, shake), state (label swap, shimmer, pulse), spatial (sheet from the foot, menu from its trigger, sliding pill), bridge (blur-fade, height following content), or delight (rare tier only). Data and the words being read never move for style.
 4. **Cheapest tool that works.**
    - CSS transition for state changes (it retargets).
-   - CSS keyframes only for mount entrances that must stay smooth while the page loads (modal, menu).
+   - CSS keyframes only for mount entrances that must stay smooth while the page loads (a modal). A menu is a transition, since it reopens.
    - Registered `@property` for animating mask lengths.
    - Web Animations API for a one-off measured height.
    - A motion library for springs, shared layout, exits and choreography.
@@ -59,9 +59,8 @@ Work through these in order for every motion. Stop as soon as the answer is "don
 | Duration | Use |
 |---|---|
 | 80ms | a fade that carries no news: chart bars on a new range, rail contents before the rail moves |
-| 100–120ms | small exits: axis labels hiding, a phone menu closing |
-| **150ms** | the workhorse: press, hover colour, toggle colour, every swap's exit, a phone menu opening |
-| 180ms | menu and popover entrance |
+| 100–120ms | small exits: axis labels hiding, a menu or popover closing, a phone menu closing |
+| **150ms** | the workhorse: press, hover colour, toggle colour, every swap's exit, a menu or popover opening, a phone menu opening |
 | **200ms** | content swaps, overlay fade, modal exit, sheet exit, copy tick, the reduced-motion fallback |
 | 220ms | rail width |
 | **240ms** | modal card entrance |
@@ -77,6 +76,7 @@ Work through these in order for every motion. Stop as soon as the answer is "don
 | Text or panel swap | 250ms | 150ms |
 | Desktop modal | 240ms | 200ms |
 | Desktop side panel | 240ms | 200ms |
+| Menu, dropdown, popover | 150ms | 120ms |
 | Phone sheet | 320ms | 200ms |
 | Phone menu | 150ms | 120ms |
 
@@ -84,18 +84,19 @@ Work through these in order for every motion. Stop as soon as the answer is "don
 
 ## 4. Springs
 
-Always written as `{ type: "spring", bounce, duration }`, never as stiffness and damping. Bounce rises with rarity.
+Always written as `{ type: "spring", bounce, duration }`, never as stiffness and damping. Bounce rises with rarity; a small part that stays inside its control (a toggle's pill, a switch knob) may bounce on every use.
 
 | Bounce / duration | Use |
 |---|---|
 | 0 / 0.5s | camera pans. No bounce on a camera. |
-| 0.12–0.15 / 0.45s | sliding selection pills. The overshoot must stay inside the track's inset. |
+| 0.12 / 0.4s | a page-level toggle's pill (a setting for the whole page, such as theme Light / Dark) |
 | 0.2 / 0.35–0.5s | height reveals, a page-entrance rise, progress fills |
 | 0.28 / 0.4s | a celebratory modal (rare) |
 | 0.3 / 0.5s | a switch knob |
+| 0.35 / 0.45s | a control's segmented toggle pill (Live / All, 7 / 30 days) |
 | 0.32–0.45 / 0.5–0.7s | a reward toast and its shapes (rare tier only) |
 
-**Springs stay inside their containers.** A bouncing pill must never touch the edge of its track.
+**Springs stay inside their containers.** A control toggle's track clips its pill (`overflow: hidden`), so the overshoot never shows outside the track. A page-level toggle takes the short bounce instead, so its pill settles before it reaches the corner of the track.
 
 ## 5. Travel, blur and scale
 
@@ -108,7 +109,7 @@ Always written as `{ type: "spring", bounce, duration }`, never as stiffness and
 | step blocks, form views, a small celebratory modal | 8px |
 | page sections, modal card | 16px |
 | toast exit | 24px |
-| sheet | 100% of its own height |
+| sheet | 100% of its own height plus 48px (the grab handle over its top edge) |
 
 **Blur is the bridge.** It hides the seam where one thing becomes another. It follows the size of what swaps, not the distance:
 
@@ -123,7 +124,7 @@ Flat, minimal surfaces (a plain sign-in page) can skip blur entirely and only fa
 
 **Scale:**
 - Press `.97` (see the ladder in [buttons-and-controls.md](buttons-and-controls.md)).
-- Enter from `.95–.96`, never from 0.
+- Enter from `.95–.97` (a menu from `.97`), never from 0.
 - Icon swaps `.5 ↔ 1` with a crossfade.
 - Decorative shapes may start at `.2–.6`. UI never does.
 
@@ -137,8 +138,10 @@ Flat, minimal surfaces (a plain sign-in page) can skip blur entirely and only fa
 ### Hover
 Colour or background only, 150ms on `--ease-out`. Nothing moves. Fine pointer only; touch gets the same look on `:active`.
 
+In a list or a menu every row has its own hover fill, which fades in and out where it is. Never one shared highlight that slides from row to row: it makes the list look as if it is shuffling.
+
 ### Menu and popover
-180ms from `scale(.96)` plus opacity, `transform-origin` at the trigger edge. Closes instantly. Library popovers: fade + zoom from .95 + a 2px slide from the trigger side. Icon tooltips: zero delay.
+Opens from its trigger: `scale(.97)` plus opacity to 1 in 150ms; closes in 120ms with the same values in reverse; `transform-origin` at the trigger edge. Both are transitions, so a quick reopen retargets; the menu stays mounted and takes `visibility: hidden` once the exit ends. The trigger's chevron turns over while it is open (see Chevrons). Library popovers: fade + zoom from .95 + a 2px slide from the trigger side. Icon tooltips: zero delay.
 
 ### Desktop modal
 - Overlay fades in 200ms.
@@ -151,9 +154,11 @@ Colour or background only, 150ms on `--ease-out`. Nothing moves. Fine pointer on
 Slides in from `translateX(100%)` to 0 in 240ms on `--ease-out`; out in 200ms. No fade or blur on the panel. Reduced motion: a 200ms crossfade.
 
 ### Phone sheet
-- Rises `translateY(100%)` to 0 in 320ms; sinks in 200ms. **No fade and no blur**: the sheet stays solid the whole way.
+- Rises from `translateY(calc(100% + 48px))` to 0 in 320ms; sinks back there in 200ms. The extra 48px takes the grab handle, which rides over the top edge, off screen too. **No fade and no blur**: the sheet stays solid the whole way.
 - Drag moves the sheet with the CSS `translate` property, which stacks on top of the enter/exit `transform` so neither interrupts the other.
-- Physics in [mobile.md](mobile.md).
+- After a release it springs back in 400ms or slides out in 300ms, both on `--ease-drawer`.
+- The grab handle scales to `.94` when pressed, 150ms.
+- The rest of the physics (slop, close thresholds, cancels) in [mobile.md](mobile.md).
 
 ### Phone menu panel
 150ms in, 120ms out, opacity plus a 4px drop, strong ease-out. No transform once open (so nothing inside is pinned to a transformed parent). `inert` while closed. The hamburger's two 1.5px lines slide to the middle and turn 45° into an × in 160ms, transform only; at rest each line sits on a whole pixel.
@@ -162,10 +167,10 @@ Slides in from `translateX(100%)` to 0 in 240ms on `--ease-out`; out in 200ms. N
 Contents fade out together (80ms), then the width animates (220ms, `--ease-out` or Material standard), then contents fade back in together. Flip the state while nothing is visible. Contents are pinned at full width, so they never slide or reflow. Never fade icons in before their text.
 
 ### Sliding selection pill
-One shared-layout element, spring `{ bounce: 0.15, duration: 0.45 }`. The first placement snaps. Optional stretch while travelling, capped at 3px (`scaleX(1 + min(0.1, 3 / width))`) on a nested element so it composes with the layout transform. Text colour changes over 150ms. Each toggle gets its own layout id.
+One shared-layout element. In a control's segmented toggle it springs with `{ bounce: 0.35, duration: 0.45 }`, the track clipping the overshoot (`overflow: hidden`). In a page-level toggle it springs with `{ bounce: 0.12, duration: 0.4 }`, so it settles short of the track's corners. The first placement snaps. The pill marks the choice only; hover never moves it. Optional stretch while travelling, capped at 3px (`scaleX(1 + min(0.1, 3 / width))`) on a nested element so it composes with the layout transform. Text colour changes over 150ms. Each toggle gets its own layout id.
 
 ### Switch knob
-x 3px to 21px, spring `{ bounce: 0.3, duration: 0.5 }`. Track colour 150ms. First render doesn't animate. Reduced motion: a 150ms tween.
+x 3px to 21px, spring `{ bounce: 0.3, duration: 0.5 }`. Track colour 150ms. First render doesn't animate. Reduced motion: instant, the knob and the track colour both.
 
 ### Label swap (loading, done)
 Both states in one grid cell. New state rises from +6px, old leaves to −6px, both with `blur(2px)`, 200ms, strong ease-out. No animation on mount. See [buttons-and-controls.md](buttons-and-controls.md).
@@ -177,10 +182,10 @@ Opacity plus `blur(4px)` to 0, 200ms, no travel. Swapping an empty state for inp
 The old step leaves as one block in 150ms (−8px, 6px blur). The new step un-blurs over 250ms while its blocks rise 8px, 40ms apart. Nothing waits: the fields take input at once.
 
 ### Chevrons
-Don't spin them. Stack two (down in ink-10, up in ink-12) and crossfade with a 4px blur, 200–300ms.
+A menu trigger's chevron turns over while its menu is open: `rotate: 180deg`, 150ms on `--ease-out`, and back as it closes. Reduced motion: it flips at once. A disclosure's chevron, which also changes ink, doesn't turn: stack two (down in ink-10, up in ink-12) and crossfade with a 4px blur, 200–300ms.
 
 ### Copy
-Icon to tick: crossfade plus scale .5 ↔ 1, 200ms. Tick drawn at 1.3×, held 1000ms. No toast.
+The tick shows on the click itself, before the clipboard answers. Icon to tick: crossfade plus scale .5 ↔ 1, 200ms. Tick drawn at 1.3×, held 1000ms (1500ms on a pill). If the clipboard refuses, or there is none, the icon comes straight back: never a tick for a copy that didn't happen. The failure message is in [buttons-and-controls.md](buttons-and-controls.md). No toast for a copy that worked.
 
 ### Rows appearing and leaving
 Three beats, the same both ways: content fades out (100ms), height changes (140ms, `--ease-out` or Material standard), new content fades in (120ms). When adding, the table lines are revealed by the height change before the text fades in, as if they were already there. Under reduced motion every duration is 0.
@@ -236,7 +241,8 @@ Respect `prefers-reduced-motion` by softening, not deleting.
 | travel, blur, scale, spin | a 150–200ms opacity crossfade |
 | a loop that carries state (live, waiting) | keeps only its opacity pulse |
 | height changes | instant |
-| springs on knobs and pills | a 150ms tween |
+| a toggle's sliding pill | a 150ms tween |
+| a switch knob | instant, the knob and its track colour both |
 | video autoplay | holds the first frame |
 | press scale | may stay (it's feedback, not travel) |
 
@@ -246,7 +252,8 @@ Add `motion-reduce:transition-none` (or the library equivalent) to every custom 
 
 - Animate keyboard actions, typing, drag, resize or figures.
 - Use `transition: all`, ease-in, or scale from 0.
-- Use overshoot except for tiny confirmations and the rare tier.
+- Use overshoot except on a small part held by its control (a toggle's pill in its clipping track, a switch knob), tiny confirmations and the rare tier.
+- Slide one shared hover highlight from row to row.
 - Run two unrelated motions at once in the same place.
 - Shimmer, tilt or glow cards for decoration.
 - Leave a transition without a reduced-motion path.

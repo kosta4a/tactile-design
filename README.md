@@ -2,9 +2,9 @@
 
 A design-engineering skill for agents and people. It teaches how to build **tactile, layered, quiet** product interfaces, and how to make the decisions behind them.
 
-Tactile: controls look like objects. White buttons sit on the page with a hairline and a small shadow, and squeeze slightly when pressed. Fields sink in as wells. The one action that matters is solid black.
+Tactile: controls look like objects. White buttons sit on the page with a fine ring and a crisp drop, and squeeze slightly when pressed. Fields sink in as wells. The one action that matters is solid black.
 
-Layered: every surface knows what it sits on. In light mode a raised surface is white with a soft shadow. In dark mode it is one step lighter with a hairline edge, because shadows don't read on a dark ground. Sizes never change between themes.
+Layered: every surface knows what it sits on, and takes its fill, edge and drop from it, so a control feels equally pressable on a page, a card, a table row or a sheet. In light mode a raised surface is white with a ring and a crisp drop. In dark mode it is a step or two lighter, with one solid 0.5px outline and a tight black drop. Sizes never change between themes.
 
 Quiet: one type weight, a neutral palette, 0.5px lines, very little colour. Hierarchy comes from contrast steps, not from bold text or bright hues. Motion is short and always has a reason.
 

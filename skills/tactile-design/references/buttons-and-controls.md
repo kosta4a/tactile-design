@@ -6,24 +6,41 @@ Values are defaults; the role or reason next to each one is what transfers. `ink
 
 | Role | Use it for | Light | Dark |
 |---|---|---|---|
-| **Primary** | The one action that commits or completes this surface: Create, Save, Continue, Finish, Apply, Copy once a secret is revealed | `--primary-bg` fill (ink-12), `--primary-fg` text (ink-1), `--shadow-primary` (1px ring in the surface colour) | ink-12 (near white) fill, ink-1 text, no shadow |
-| **Accent primary** (opt-in) | Only when the brand requires a coloured primary. Same job as the primary. | accent-9 fill, accent-contrast text (at least 4.5:1), accent-10 hover, `--shadow-primary` | same steps, no shadow |
-| **Secondary** | Every other action of the surface: Cancel, Close, Skip, Docs, View plans, section and header actions | `--raised` (white), `--shadow-button`, no border | ground + 2 steps (ink-3 on the page, ink-4 in a modal), 0.5px ink-5 ring |
-| **Utility pill** | Light tools attached to content: Copy on a code block, filters, presets, Back in a flow, Show key inside a field, the ⋯ menu | fully round, 28px, white, `--shadow-toggle` | ink-4, hover ink-5, `--shadow-toggle` (edge + dark drop) |
+| **Primary** | The one action that commits or completes this surface: Create, Save, Continue, Finish, Apply, Copy once a secret is revealed | `--primary-bg` fill (ink-12), `--primary-fg` text (ink-1), `--shadow-primary` (1px ring in the surface colour) | ink-12 (near white) fill, ink-1 text, `--shadow-primary`: a 0.5px outline in its own fill plus the tight black drop |
+| **Accent primary** (opt-in) | Only when the brand requires a coloured primary. Same job as the primary. | accent-9 fill, accent-contrast text (at least 4.5:1), accent-10 hover, `--shadow-primary` | same steps, `--shadow-primary` (0.5px outline in its fill + tight black drop) |
+| **Secondary** | Every other action of the surface: Cancel, Close, Skip, Docs, View plans, section and header actions | `--raised` (white), `--shadow-button`, no border | ground + 2 steps (ink-3 on the panel, ink-4 on a card or in a modal), `--shadow-button`: a solid 0.5px outline three steps above the fill (ink-6 on the panel, ink-7 on a card or in a modal) + tight black drop |
+| **Utility pill** | Light tools attached to content: Copy on a code block, filters, presets, Back in a flow, Show key inside a field, the ⋯ menu | fully round, 28px (36px on a coarse pointer), white, `--shadow-toggle`; 14px icon, body-size label | ground + 2 steps, hover + 3, `--shadow-toggle` (the button's outline and drop) |
 | **Icon** | Per-row or in-field tools with a universal glyph: copy, edit, delete | no fill, ink-10 glyph, ink-12 on hover | same |
 | **Ghost** | Tertiary actions inside a form: Remove, Clear | no fill, ink-10 text, ink-12 over an ink-2 wash on hover | same |
 | **Text link** | Tertiary navigation in a sentence: "No account? Sign up", only the link word underlined | same size as button text | same |
 | **Destructive trigger** | Opens a destructive confirm: Delete, Revoke, Remove member | secondary with red-11 text and icon, hover red-3. Or soft: red-3 fill, 0.5px red-6 edge, red-11 text, hover red-4 | same steps |
-| **Destructive confirm** | The final yes inside a destructive dialog | solid red-9, red-contrast text (white), no shadow, hover `brightness(.95)` | same |
+| **Destructive confirm** | The final yes inside a destructive dialog | solid red-9, red-contrast text (white), no shadow, hover `brightness(.95)` | same fill, a 0.5px red-9 outline + tight black drop, as the dark primary |
 
 **Rules behind the table**
 
 - **A rectangle at control radius belongs to the surface; a round pill belongs to the content.** Page and dialog actions are rectangles. Tools that act on one piece of content are pills.
 - **No grey filled buttons in light.** Every button is white or the primary fill. A grey fill reads as disabled.
 - **Hue fills at most two buttons:** red-9 on the final destructive confirm, and the primary only if the brand opted into an accent primary. Then that hue leaves status use, and destructive must still look clearly different. Otherwise brand colour lives in tints (badges, charts, identity).
-- **The primary needs no drop shadow.** The darkest thing on a light page already wins. Its 1px ring in the surface colour makes it read a pixel smaller, which levels it optically with the white buttons, whose ring sits outside.
+- **The primary needs no drop shadow in light.** The darkest thing on a light page already wins. Its 1px ring in the surface colour makes it read a pixel smaller, which levels it optically with the white buttons, whose ring sits outside. In dark it is the lightest thing, and takes the tight black drop every dark control keeps, under a 0.5px outline in its own fill: `0 0 0 0.5px var(--primary-bg), 0 1px 2px 0 rgb(0 0 0 / .5)`.
 - **Destructive is never the primary.** Solid red appears only at the last step, inside the dialog, so a delete never reads as the safe default. The trigger that opens the dialog is softer.
 - **Hover works with any colour.** The primary hovers to `--primary-hover`, a 7% mix toward its text colour: it lightens a dark fill and darkens a light one. (`brightness(.95)` barely moves a near-black fill; it is fine on a mid-tone like red-9.)
+
+### Tactility borrows from the parent
+
+A control's fill, edge and drop are never absolute values. Each is taken from the surface it sits on, so the same button, pill, toggle or badge reads equally raised on a panel, a card, a rail, a table row, a sheet or a tinted surface, in light and in dark.
+
+| Part | Light | Dark |
+|---|---|---|
+| Fill | `--surface-top` (white) | parent + 2 steps for a control (parent + 1 for a card) |
+| Edge | a 1px ring, `0 0 0 1px rgb(ink / .08)`: alpha, so it darkens whatever is beneath | one solid 0.5px outline three steps above the fill, the same colour all round: `0 0 0 0.5px var(--ink-7)` over an ink-4 control on a card or overlay, ink-6 over an ink-3 control on the panel |
+| Drop | `0 1px 2px 0 rgb(ink / .12)` | `0 1px 2px 0 rgb(0 0 0 / .5)` |
+| Badge | its own hue: a 14% ring and a 16% drop | a dark shade of its own colour, `color-mix(in srgb, currentColor 34%, #000)`, plus the black drop |
+
+- **A drop is always darker than its parent, never lighter.** Light drops are drawn in `--shadow-ink`, dark drops in black. A light colour used as a shadow in dark reads as a glow.
+- **Dark edges are 0.5px and solid.** No lit top edge (`inset 0 1px 0 rgb(255 255 255 / x)`) and no second line under the edge: on a dark ground the two read as a gradient outline.
+- **Dark controls keep their drop.** Buttons, pills, the chosen toggle option and badges all keep the tight black drop under the outline. Without it a grey control reads flat.
+- **A white control on a white parent** (a secondary button on a white card, a neutral badge) gets its edge from the ring and the drop, never from a grey fill.
+- **Redeclare per surface.** These shadows are variables built from working steps, so they resolve where they are declared. Redeclare them on each surface class, as the step-shift rule in [tokens.md](tokens.md) says, or the edge won't follow the parent.
 
 ## 2. How many primaries
 
@@ -60,19 +77,19 @@ Recipes use tokens only (see [tokens.md](tokens.md)): sizes, radii, colours, typ
   hover:bg-[var(--primary-hover)] active:scale-[0.97]
   transition-[transform,scale,background-color] duration-[var(--dur-hover)] ease-[var(--ease-out)]
   disabled:opacity-60 disabled:active:scale-100 disabled:hover:bg-[var(--primary-bg)]
-  dark:disabled:opacity-100 dark:disabled:bg-ink-4 dark:disabled:text-ink-8">Create project</button>
+  dark:disabled:opacity-100 dark:disabled:bg-ink-4 dark:disabled:text-ink-8 dark:disabled:shadow-none">Create project</button>
 
-<!-- Secondary (dark: ink-3 on the page, ink-4 in a modal) -->
+<!-- Secondary (dark: ground + 2, hover + 3; ink-3 / ink-4 on the panel, ink-4 / ink-5 on a card or in a modal) -->
 <button class="h-[var(--control-h)] px-3.5 rounded-[var(--radius-control)] bg-[var(--raised)] text-ink-12
   text-sm tracking-[var(--tracking-label)] shadow-[var(--shadow-button)]
   hover:bg-[var(--root-ink-2)] active:scale-[0.97]
   transition-[transform,scale,background-color] duration-[var(--dur-hover)] ease-[var(--ease-out)]
   dark:bg-ink-3 dark:hover:bg-ink-4 disabled:opacity-60">Cancel</button>
 
-<!-- Utility pill (icon leads) -->
-<button class="h-[var(--control-h-pill)] rounded-full pl-2.25 pr-2.75 gap-1 inline-flex items-center
+<!-- Utility pill (icon leads; dark fill as the secondary) -->
+<button class="h-[var(--control-h-pill)] pointer-coarse:h-9 rounded-full pl-2.25 pr-2.75 gap-1 inline-flex items-center
   bg-[var(--raised)] text-sm shadow-[var(--shadow-toggle)] active:scale-[0.97]
-  dark:bg-ink-4 dark:hover:bg-ink-5 touch-target">Copy</button>
+  dark:bg-ink-3 dark:hover:bg-ink-4 touch-target">Copy</button>
 
 <!-- Row icon button -->
 <button aria-label="Delete" class="size-[var(--control-h-icon)] rounded-[var(--radius-control)] text-ink-10
@@ -82,8 +99,10 @@ Recipes use tokens only (see [tokens.md](tokens.md)): sizes, radii, colours, typ
 - `--control-h` is 44px on a phone, so these recipes lift without a `max-md:` class.
 - **Hover inside overlays** uses `--root-ink-2`, because overlays repaint their own ink-2 as the surface top.
 - **Dark colour utilities are fine; dark layout utilities are not.** `dark:bg-*` may change colour or shadow. It may never change padding, height, radius or border width.
+- **Dark edges come from the tokens.** `--shadow-primary`, `--shadow-button` and `--shadow-toggle` already carry the solid 0.5px outline and the tight black drop in dark. Never add a `dark:` inset highlight or a second ring.
+- **A page-level pill action** (copy the page, share) sits beside the page's other controls, at the pill's size: 28px, a 14px icon, body-size words.
 - **Over media:** `bg-black/50 backdrop-blur-md text-white`.
-- **Sheet action (phone):** `h-[var(--control-h)] w-full px-3.5 gap-2 text-base bg-[var(--raised)] shadow-[var(--shadow-button)] active:bg-[var(--root-ink-2)]` (16/24 text), icon before the words, ink-4 in dark. A real button, not a row of words.
+- **Sheet action (phone):** `h-[var(--control-h)] w-full px-3.5 gap-2 text-base bg-[var(--raised)] shadow-[var(--shadow-button)] active:bg-[var(--root-ink-2)]` (16/24 text), icon before the words, ground + 2 in dark (ink-4 on the ink-2 sheet). A real button, not a row of words.
 
 ## 5. Sizes
 
@@ -110,6 +129,7 @@ Recipes use tokens only (see [tokens.md](tokens.md)): sizes, radii, colours, typ
 | Icon | Size and ink |
 |---|---|
 | Leading icon in a button | 16px; ink-9 inside white buttons; text 2px closer to it than to the edge |
+| Small icon beside text (pills, toggle options) | 14px, 4px before the label, stroke 2.5 on the 24px grid |
 | Standalone, row icon | 16–20px, ink-10 to ink-11 |
 | Empty-state icon | 18px desktop, 24px phone |
 | External-link arrow | only when the link truly leaves the app; 14px, ink-10 |
@@ -117,12 +137,17 @@ Recipes use tokens only (see [tokens.md](tokens.md)): sizes, radii, colours, typ
 
 **Icon style:** a 1.5px rendered stroke at 16px (the marks token), round caps and joins, about 1px corner radius. Match the stroke to the UI weight: 1.25px for a light face, 1.75px for a heavy one. A good default is Lucide with `absoluteStrokeWidth` at 1.5. Checkmarks are slightly rounded everywhere. A filled glyph means "ready to run" (a filled play on Start).
 
+- **Small icons get a heavier stroke.** A stroke set on the 24px grid thins as the icon shrinks, so raise it: 2.5 at 14px (about 1.46px rendered), not the default 2 (1.17px), which looks thin beside text. An absolute stroke width does this for you.
+- **An icon beside text is centred on the text's line**, not sat on its baseline: `inline-flex items-center` on the pair.
+- **The copy glyph is rounder than the set:** both squares take a 3.5 corner radius on the 24px grid (the stock glyph draws 2).
+
 ## 6. States
 
 ### Hover
 - One step above the local ground on fills; ink-11 to ink-12 on text; `--primary-hover` on the primary.
 - Selected is two steps above the local ground, so hover never matches it. Hovering a selected item keeps it selected.
 - Colour only, 150ms. Nothing moves.
+- Each row in a list or menu has its own hover fill, which fades in and out where it is. Never one shared highlight that slides from row to row.
 - Only on a fine pointer. On touch the same look shows while pressed (see [mobile.md](mobile.md)).
 
 ### Press
@@ -138,14 +163,14 @@ Done in CSS so a quick second press retargets instead of restarting. The squeeze
 Disabled controls cancel both: `disabled:active:scale-100`, and the hover returns to the resting fill.
 
 ### Focus
-Every interactive element needs a visible `:focus-visible` state.
-- Buttons and icon buttons: `outline: 2px solid var(--ink-12); outline-offset: 2px`.
-- Rows, pills and cards: shift to their hover fill.
-- Fields: deepen their fill one step (the same as focus by pointer). That shift is only about 1.08:1, too faint for keyboard users, so also add a cue at 3:1 or more, e.g. `box-shadow: 0 0 0 2px var(--ink-12)`. Text fields match `:focus-visible` on a click too, so mouse users will see it as well; accept that, or show it only after a keydown.
+Every interactive element needs a visible `:focus-visible` state, drawn with one token: `--focus-ring` (ink-10 by default). It keeps 3:1 or more against white, against the ink-2 and ink-3 tracks and wells, and against the dark surfaces, so it works on every control in both themes. Never hard-code a dark alpha for focus; it vanishes in dark.
+- Buttons, pills, toggle options, switches and icon buttons: `outline: 2px solid var(--focus-ring); outline-offset: 2px`.
+- Rows and cards reached with Tab: the same outline. Items moved through with arrow keys (menus, choice lists) show the highlight fill instead.
+- Fields: deepen their fill one step (the same as focus by pointer). That shift is only about 1.08:1, too faint for keyboard users, so also add `box-shadow: 0 0 0 2px var(--focus-ring)`. Text fields match `:focus-visible` on a click too, so mouse users will see it as well; accept that, or show it only after a keydown.
 
 ### Disabled
 - `opacity: .6` for buttons, switches and fields; `.4` for icon buttons. Hover and press off. (The black primary also appears at `.5`; pick one per product.)
-- In dark, a faded white primary still glows like a live button. Make it solid instead: ink-4 fill, ink-8 text, full opacity.
+- In dark, a faded white primary still glows like a live button. Make it solid instead: ink-4 fill, ink-8 text, full opacity, and no outline or drop, so it no longer reads as pressable.
 - On a phone, explain why a control is disabled in text under it. Never only in a tooltip.
 
 ### Loading (label swap)
@@ -157,10 +182,12 @@ Every interactive element needs a visible `:focus-visible` state.
 - Never show a wrong label while loading. If the current state is unknown, the button reads "Loading…" and is disabled.
 
 ### Copy feedback
-- The copy icon turns into a tick. The tick is drawn at 1.3× so it reads the same size as the icon it replaces.
+- The copy icon turns into a tick **on the click itself**, before the clipboard answers. Waiting for the promise makes the button feel slow.
+- The tick is drawn at 1.3× so it reads the same size as the icon it replaces.
 - Both scale between .5 and 1 with a crossfade, 200ms. Reduced motion: opacity only.
 - The tick holds 1000ms on an icon button, 1500ms on a pill.
-- No toast and no flash of the field on success. A toast appears only if the copy fails.
+- No toast and no flash of the field.
+- If the clipboard refuses, revert at once: the tick goes back to the copy icon, so the button never claims a copy that didn't happen. A pill with words says "Copy failed" in place of its label for the same hold.
 
 ## 7. Fields
 
@@ -180,7 +207,7 @@ Every interactive element needs a visible `:focus-visible` state.
 - A button that opens search wears a field's look: a 0.5px ink-6 border, white (ink-2 in dark), border ink-7 on hover, no shadow.
 - Exception: on a phone in light, the search bar is raised (white + `--shadow-button`) like the buttons around it.
 
-**Select trigger:** control height, the well or the white button look depending on context, with a 16px ink-9 up-down chevron at the right.
+**Select trigger:** the dropdown trigger in §8: the white button at control height, with a 16px ink-9 chevron at the right that turns over while open.
 
 ### Errors
 - **Invalid field:** keep the well and add a 1px red-11 ring as a box-shadow (`0 0 0 1px var(--red-11)`, the same error ring choice tiles and selects use), so nothing moves.
@@ -192,11 +219,12 @@ Every interactive element needs a visible `:focus-visible` state.
 
 ### Segmented toggle
 - **View switching inside a page (Live / All) uses this toggle.** There are no underline tabs.
-- Track: fully round, 4px padding, 4px gap, one step darker than the surface it sits on.
+- Track: fully round, 4px padding, 4px gap, one step darker than the surface it sits on (one step lighter in dark: a well).
 - Options: 28px tall (track 36px), 11px side padding, 13/20. Active text ink-12; inactive ink-11, ink-12 on hover.
-- One sliding pill behind the active option: white + `--shadow-toggle` in light; one step above the track in dark (ink-4) with a 1px ink-6 edge and a dark drop.
-- The pill moves as a shared-layout spring, `{ bounce: 0.15, duration: 0.45 }`. The overshoot must stay inside the 4px inset and never touch the track edge. `overflow: hidden` is the backstop.
+- One sliding pill behind the active option, raised like a button and borrowed from the surface: white + `--shadow-toggle` (the button's ring and 1px drop) in light; in dark the control fill (ground + 2, one step above the track) with `--shadow-toggle`: an outline three steps above the pill's fill plus the black drop, `0 0 0 0.5px var(--ink-7), 0 1px 2px 0 rgb(0 0 0 / .5)` on a card.
+- The pill moves as a shared-layout spring, `{ bounce: 0.35, duration: 0.45 }`. The track clips the overshoot: `overflow: hidden` at its full radius.
 - The first placement snaps; only a real toggle animates.
+- **Page-level toggle** (a setting for the whole page, such as Light / Dark): the same component, with a 14px icon left of each label (4px gap) and labels at the page's body size and weight. Its spring is shorter, `{ bounce: 0.12, duration: 0.4 }`, so the pill settles without riding into the ends of the track.
 - Toggles hug their content. They are the one control that doesn't fill a modal's width.
 - On a phone: options 36px, track 44px (so it lines up with fields), 14px text. Optionally fill the width with equal options, as iOS does. If the options don't fit, it becomes a dropdown pill that opens a sheet.
 - Accessibility: `role="radiogroup"`, one tab stop, arrow keys move between options.
@@ -224,31 +252,41 @@ Use tiles when options sit in a grid on a page, rather than a list in a modal.
 - When picked it looks **pressed in, not raised**: ink-3 fill (ink-4 in dark) with the hairline only, no shadow.
 
 ### Switch
-- 40×22 track, 16px white knob with a small drop.
+- 40×22 track, 16px white knob with a tight drop darker than the track under it: `0 1px 2px rgb(ink / .25), 0 0 0 0.5px rgb(ink / .04)` (black in dark).
 - On: green-9. Off: ink-7 in light; in dark a near-black grey between ink-5 and ink-6 (#343434 by default).
-- The knob springs across, x 3px to 21px, `{ bounce: 0.3, duration: 0.5 }`. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: a 150ms tween.
+- The knob springs across, x 3px to 21px, `{ bounce: 0.3, duration: 0.5 }`. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
 - Disabled: `opacity: .6`.
 - 44pt hit area via `touch-target`.
 - A switch setting in a form is a raised row: white + `--shadow-button`, control radius, 12px padding.
 
 ### Filter pills
 - Each pill names what is picked ("Status Failed") with a 20px × to clear it (28px on a phone). Label ink-10, value ink-12.
-- 28px tall (36px on a phone), white + `--shadow-toggle`. Open state: ink-2.
+- 28px tall (36px on a phone), white + `--shadow-toggle`; in dark the control fill (ground + 2) with the same token. Open state: ink-2.
 - One row next to the toggles, search at the right. The last pill truncates (value max 180px) so search keeps its place. On a phone the row scrolls sideways under 20px edge fades; it never wraps.
 
-### Menu items
-- 36px rows (40px in long lists, 48pt in a phone sheet), control radius, 13/20 ink-11.
-- Light: hover `--root-ink-2` with ink-12 text; picked row ink-3. Dark: hover ink-4, picked ink-5 (dark controls sit a step higher, so both move up one; hover still stays a step below picked). Picked rows get **no tick**; the fill alone says it.
-- A menu with no picked row may hover deeper, at ink-4 in light.
+### Dropdowns and menus
+- **Trigger:** the white secondary button: control height (36px), control radius, `--shadow-button`, `scale(.97)` on press. A 16px ink-9 chevron at the right turns over (`rotate(180deg)`) while the menu is open, in step with the menu.
+- **Menu:** `--shadow-menu`, crisp, with no big soft blur: the button's ring and 1px drop plus one short drop. Light `0 0 0 1px rgb(ink / .08), 0 1px 2px 0 rgb(ink / .12), 0 4px 8px -4px rgb(ink / .16)`; dark `0 0 0 0.5px var(--ink-7), 0 1px 2px 0 rgb(0 0 0 / .5), 0 4px 8px -4px rgb(0 0 0 / .5)`. Surface and padding in [surfaces-and-layering.md](surfaces-and-layering.md).
+- **Opening:** from the trigger, `scale(.97)` to 1 plus opacity, `transform-origin` at the trigger; 150ms in, 120ms out, `--ease-out`.
+- **Fit:** a menu stays inside the container it opens in (a modal, a sheet, a card). Shorten the list until it fits rather than let it cross that edge.
+
+**Items**
+- 36px rows (40px in long lists, 48pt in a phone sheet), 2px apart, control radius, 13/20 ink-11.
+- Highlight (pointer or arrow keys, one state): local ground + 1 step, ink-12 text. Chosen: local ground + 2 steps, ink-12 text. So in a light menu `--root-ink-2` and `--root-ink-3`; in a dark ink-2 menu, ink-3 and ink-4. Highlight always stays a step below chosen.
+- The chosen item gets **no tick**; the grey fill in full ink alone says it.
+- A menu with no chosen item may highlight deeper, at ink-4 in light.
 - A destructive item is red-11 with a red-a3 hover.
 - A multi-select menu ends with a primary Apply (32px; 44px full width on a phone), faint while there's nothing to apply.
 
 ## 9. Badges, key chips, status dots
 
 ### Badge
-- `h-[var(--badge-h)] rounded-full px-2 text-xs leading-[var(--badge-h)] shadow-[var(--shadow-badge)]`; 6px padding on the side where an icon leads, and for very short words.
-- Colour: hue-3 fill, hue-11 text. Neutral: ink-3 with ink-11.
-- Neutral raised badge (a plain value, like a balance): white + `--shadow-button`, ink-11 text; in dark an ink-3 fill with a 0.5px inset ring.
+- `h-[var(--badge-h)] rounded-full px-2 text-xs leading-[var(--badge-h)] shadow-[var(--shadow-badge)]`; 6px padding on the side where an icon leads, and for very short words. Always fully round.
+- Colour (every status and identity badge: Live, Failed, Prod, a plan tier): hue-3 fill, hue-11 text, `--shadow-badge`.
+- **A badge borrows its edge from itself.** `--shadow-badge` is drawn from `currentColor` (its hue-11 text), so each hue tints its own edge:
+  - Light: the white button's recipe in the badge's own colour, `0 1px 2px 0 color-mix(in srgb, currentColor 16%, transparent), 0 0 0 1px color-mix(in srgb, currentColor 14%, transparent)`. Tight, like the button; not an inset ring plus a soft glow.
+  - Dark: a solid outline in a dark shade of its own colour plus the tight black drop, `0 0 0 0.5px color-mix(in srgb, currentColor 34%, #000), 0 1px 2px 0 rgb(0 0 0 / .5)`. Never the hue's light text colour as a blurred shadow: on a dark ground it reads as a glow.
+- Neutral (a status with no hue, such as Released or Stopped, or a plain value, like a balance): white on the white card, ink-11 text, `--shadow-button`; the ring and drop give the edge, never a grey fill. In dark: one step above its parent (ink-3 on an ink-2 card) with `--shadow-button`, the control's solid 0.5px outline and black drop.
 - Numbers use `tabular-nums`.
 - Beside a 20px title the badge goes one size up: 24px tall, 13px text, 10px sides, 8px from the title.
 - Phone: 22px tall with 14px text.

@@ -114,30 +114,51 @@ The utilities set no gap. Page action stacks keep their own 12px; dialog, sheet 
 - Max height `calc(100dvh - env(safe-area-inset-top) - 24px)`; the 24px stays clear for the grab handle.
 - The sheet's colour runs about 200px below its foot, so pulling up never shows a gap.
 - The home-indicator inset is a transparent bottom border, so the sheet's own padding stays its own.
+- Closed, it rests at `translateY(calc(100% + 48px))`, so the grab handle over its top edge leaves the screen with it.
+
+**Ground**
+
+The sheet is the ground its parts borrow from. Give it the overlay surface class (`.surface-overlay`, [tokens.md](tokens.md) §3) and redeclare the tactile tokens there, so every fill, edge and drop inside follows the sheet, not the page behind it.
+
+| Part | Light | Dark |
+|---|---|---|
+| Sheet | `--surface-top` (white) | ink-2 |
+| Card of rows | white on the white sheet: its edge is the ring and drop of `--shadow-button`, never a fill change | the sheet + 1 step (ink-3); one solid 0.5px ink-7 outline; `0 1px 2px 0 rgb(0 0 0 / .5)` |
+| Button | white + `--shadow-button` | the sheet + 2 steps (ink-4); one solid 0.5px ink-7 outline; `0 1px 2px 0 rgb(0 0 0 / .5)` |
+
+Every drop is darker than the sheet: `--shadow-ink` in light, black in dark. Never a light glow.
 
 **Grab handle (replaces the ×)**
-- A 36 × 5 pill whose foot sits 12px above the sheet, on the backdrop.
-- Light: white at 90% with a faint shadow (`0 0 0 .5px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.2)`). Dark: white at 70%.
-- Its hit area is an 88 × 44 button (width × height) labelled "Close": a tap closes the sheet.
+- A 36 × 5 pill whose foot sits 12px above the sheet's top edge, on the backdrop.
+- Solid white in both themes, tactile like a button: `box-shadow: inset 0 -0.5px 0 rgb(0 0 0 / .08), 0 0 0 0.5px rgb(0 0 0 / .12), 0 1px 2px rgb(0 0 0 / .28)` (a faint inner bottom edge, the ring, the drop). Its parent is the dimmed backdrop, not the sheet, so its ring and drop are black.
+- Its hit area is an 88 × 44 button (width × height) labelled "Close". A tap, a click, Enter or Space on it closes the sheet.
+- Pressed, the pill scales to `.94` over 150ms on `--ease-out`.
+- Keyboard focus rings the pill with a 2px white gap, so the ring keeps its contrast on the dimmed page.
 
 **Content**
 - No title band, no header hairline. The title is a 20/28 ink-12 section title on the sheet itself.
 - Body padding 20px on the sides and top.
 - A sheet in parts gives each part its own title, 12px above its content; parts sit 24px apart.
-- Related information joins into **one raised card** of rows: white + button shadow in light, ink-3 on the ink-2 sheet in dark; radius 6; 0.5px rules between rows; rows at least 48pt, text 12px in, 16/24 text. The chosen row is ink-3 (ink-4 in dark), and a press shows the same.
-- **Buttons never sit inside the card.** Below it, 12px under, 8px apart: full-width 44pt secondary buttons, icon before the label. They must look like real buttons, with enough contrast.
+- Related information joins into **one raised card** of rows, drawn from the sheet as **Ground** says; radius 6; 0.5px rules between rows; rows at least 48pt, text 12px in, 16/24 text. The chosen row is local ground + 2 (ink-3 on the white card, ink-5 on the dark ink-3 card), and a press shows the same.
+- **Buttons never sit inside the card.** Below it, 12px under, 8px apart: full-width 44pt secondary buttons, raised from the sheet as **Ground** says, icon before the label. They must look like real buttons, with enough contrast.
 - Footer stacked, confirm on top, 8px gaps, bottom padding `max(24px, calc(12px + env(safe-area-inset-bottom)))`.
 
 **Motion:** rises in 320ms, sinks in 200ms, solid the whole way (no fade, no blur). Reduced motion: fade only.
 
 **Drag physics**
-- Drag from the handle or the header. The sheet's own controls never start a drag; only drag regions set `touch-action: none`.
-- 4px of slop before a press counts as a drag. The click that ends a drag is swallowed.
+- Drag from anywhere on the sheet: the handle, the title, the rows and the buttons. The sheet sets `touch-action: none` and `user-select: none`.
+- On the handle a press is a drag at once; released without moving more than 4px, it closes the sheet. Close it from the sheet's `pointerup`: the sheet holds the pointer, so the handle's own click never fires for a pointer.
+- Anywhere else a press becomes a drag only once it has moved more than 4px (the slop). Until then it is a tap on the row or button under it, and a tap stays a tap.
+- Once a press is a drag, the sheet captures the pointer. The click that ends a drag is swallowed, so the row or button it began on doesn't fire.
+- **Only the sheet's own pointer-capture loss cancels a drag.** On touch the browser captures a press to the row or button it lands on; when the drag takes the pointer to the sheet, that element's `lostpointercapture` bubbles up to the sheet. Ignore it unless its target is the sheet. A cancel springs back.
+- A body that scrolls keeps its scroll, and drags the sheet only when it is at its top and pulled down.
 - Velocity is measured over the last 100ms.
-- **Close** when dragged past 25% of the sheet's height, or on a flick faster than 0.11 px/ms. Slide out in 300ms on `--ease-drawer`.
+- **Close** when dragged down past `min(64px, 15% of the sheet's height)`, or on a downward flick faster than 0.11 px/ms, so a short pull is enough on a tall sheet too. Slide out in 300ms on `--ease-drawer`.
 - **Otherwise spring back** in 400ms on `--ease-drawer`.
+- A press that catches the sheet mid-spring takes it from where it is.
 - Dragging up only gives, tiring out towards 32px: `offset = (1 - 1 / (d * 0.55 / 32 + 1)) * 32`. This is the only rubber band in the app.
 - Drag uses the CSS `translate` property so it stacks on the enter/exit `transform`.
+- Reduced motion: a release snaps straight back, or the sheet fades out from where it is.
 - Drag only on a phone, and never while the sheet can't close (busy, paying).
 
 **Search on a phone** becomes a full-screen sheet: the field across the top (56px) with Cancel at its end, results below to the foot.
@@ -167,7 +188,7 @@ The utilities set no gap. Page action stacks keep their own 12px; dialog, sheet 
 - Nothing hides under the notch, the home indicator or the browser bars.
 - No hover-only information; no sticky hover after a tap.
 - Fields don't zoom the page.
-- Sheets drag and close as described; nothing rubber-bands except the sheet's upward give.
+- Sheets drag and close as described: a tap on a row still lands, a short pull or a flick closes, and nothing rubber-bands except the sheet's upward give.
 - Both themes, at zoom.
 
 ## Credit

@@ -93,7 +93,7 @@ The default section, summarised: **20px titles over 13px lines, 24px apart, in 3
 - **Space above equals space below** for anything placed between two things.
 - **One left edge.** All text in a column starts on the same line. When centring, centre the text, not the markers beside it. Table cells align left.
 - **Icons** align to the first line of text, or centre on the title-plus-description block as a whole.
-- **Numbers align right.** A badge may run slightly past the padding to keep that line. In a row of pills, align the text inside them, not the pills.
+- **Numbers in a table align left** with every other cell, in tabular figures. **Elsewhere a value set against its label aligns right** (a stat row, a meter's amount). A badge may run slightly past the padding to keep that line. In a row of pills, align the text inside them, not the pills.
 - **Fixed ratios.** Action cells are 1:1. Media and players are 16:9. Thumbnails share their card's ratio. Logos in a set get equal visual weight (nudge each 2–10%).
 - **Hug or fill.** Table columns, toggles and action cells hug their content, up to the caps in §7, so text doesn't wrap. Inputs and dropdowns in a modal fill the width. Desktop dialog buttons hug; phone action stacks fill.
 - **Nested radius = outer minus border.** No double borders.
@@ -171,7 +171,7 @@ Preview each component with the shortest and longest real values before shipping
 
 ## 9. Steps and markers
 
-- **Marker:** a 32px disc, number 16/24 ink-11, white + `--shadow-button` (ink-3 + ring in dark), nudged to centre on the 24px title line.
+- **Marker:** a 32px disc, number 16/24 ink-11, white + `--shadow-button` (in dark ink-3 with the same token: its solid 0.5px outline and black drop), nudged to centre on the 24px title line.
 - **Connector:** 0.5px ink-6 line, 8px under the marker, 12px above the next.
 - Marker to text: 16px (12px on a phone). All steps the same height.
 - **States:** done = green-9 disc with a tick in green-contrast; waiting = a slowly turning dashed ring with a shimmer on the title; counting = a segmented ring (accent-9 done, accent-6 to go).
