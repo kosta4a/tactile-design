@@ -227,7 +227,7 @@ Every interactive element needs a visible `:focus-visible` state, drawn with one
 - The first placement snaps; only a real toggle animates.
 - **Page-level toggle** (a setting for the whole page, such as Light / Dark): the same component, with a 14px icon left of each label (4px gap) and labels at the page's body size and weight. The same spring, so the pill settles without riding into the ends of the track.
 - Toggles hug their content. They are the one control that doesn't fill a modal's width.
-- On a phone: options 36px, track 44pt (so it lines up with fields), 14px text, each option with a 44pt hit area. Optionally fill the width with equal options, as iOS does. If the options don't fit, it becomes a dropdown pill that opens a sheet.
+- On a phone: options 34px, track 42px, 14px text, each option with a 44pt hit area. At the end of a settings row it sits as far from the row's right edge as from its top and bottom (9px in a 60px row); the row's label keeps its 16px. Optionally fill the width with equal options, as iOS does. If the options don't fit, it becomes a dropdown pill that opens a sheet.
 - Accessibility: `role="radiogroup"`, one tab stop, arrow keys move between options.
 - Use the same toggle component everywhere.
 
@@ -253,10 +253,12 @@ Use tiles when options sit in a grid on a page, rather than a list in a modal.
 - When picked it looks **pressed in, not raised**: ink-3 fill (ink-4 in dark) with the hairline only, no shadow.
 
 ### Switch
-- **As tall as the segmented toggle,** so the two line up in a settings card: a 60×36 track (72×44 on a phone), an iPhone's proportions. The knob sits the toggle's 4px in all round: 28px (36pt on a phone).
+- **As tall as the segmented toggle on desktop,** so the two line up in a settings card: a 60×36 track, an iPhone's proportions, the knob the toggle's 4px in all round: 28px.
+- **On a phone, an iPhone's switch** (Apple's HIG): a 51×31 track, the knob still 4px in all round: 23px. 44pt hit area. At a row's end it lines up with the toggle above it, 9px from the right edge.
+- **Place the knob with flex, not a pixel offset:** the track is `p-1` with `justify-start` off and `justify-end` on, and the knob moves as a layout animation (`motion.span layout`). It's in place at any size from the first paint (a measured or media-queried offset renders desktop's first and visibly slides on a phone), and Reduce motion makes the move instant.
 - The knob is shaded like the toggle's pill: white with `--shadow-toggle` (the button's 1px ring and crisp drop; in dark a solid 0.5px outline and the black drop). It stays white in dark: a grey knob reads as a hole in the track.
 - On: green-9. Off: ink-7 in light; in dark a near-black grey between ink-5 and ink-6 (#343434 by default).
-- The knob springs across, x 4px to 28px (4px to 32px on a phone), `{ bounce: 0.2, duration: 0.45 }`, short enough that the overshoot never reaches the track's edge. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
+- The knob springs across, `{ bounce: 0.2, duration: 0.45 }`, short enough that the overshoot never reaches the track's edge. The track colour changes over 150ms. First render places the knob without animating. Reduced motion: instant, the knob and the track colour both.
 - Disabled: `opacity: .6`.
 - 44pt hit area via `touch-target`.
 - A switch setting in a form is a raised row: white + `--shadow-button`, control radius, 12px padding.

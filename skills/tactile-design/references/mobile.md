@@ -48,8 +48,9 @@ A phone layout isn't the desktop layout squeezed. It follows the platform's habi
 | Item | Phone |
 |---|---|
 | Buttons, fields, selects, toggle tracks | 44px (36px desktop recipes lift automatically) |
-| Segmented toggle | 44pt track: 36px options in the 4px inset, each with a 44pt hit area |
-| Switch | as tall as the segmented toggle: 72×44 track, 36pt knob 4pt in, shaded like the toggle's pill |
+| Segmented toggle | 42px track: 34px options in the 4px inset, each with a 44pt hit area |
+| Switch | an iPhone's (Apple HIG): 51×31 track, 23px knob 4px in, shaded like the toggle's pill; 44pt hit area |
+| A control at a row's end | as far from the row's right edge as the toggle is from its top and bottom (9px in a 60px row) |
 | Field | 44pt well, 16/24 text, any icon or key inside 32px, 6px from the end |
 | Icon buttons, pills, small marks | keep their look; `touch-target` gives a 44pt hit area |
 | Gap between small icon buttons | wide enough that hit areas don't overlap (22px icons sit 22px apart) |
